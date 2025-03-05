@@ -1,7 +1,7 @@
 #pragma once
 #include "expr.hpp"
 
-value_t _operatorAdd(value_t left, value_t right);
-value_t _operatorSub(value_t left, value_t right);
-value_t _operatorMult(value_t left, value_t right);
-value_t _operatorDiv(value_t left, value_t right);
+value_t _operatorAdd(std::vector<value_t> args);
+value_t _operatorSub(std::vector<value_t> args);
+value_t _operatorMult(std::vector<value_t> args);
+value_t _operatorDiv(std::vector<value_t> args);

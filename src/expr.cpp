@@ -5,7 +5,7 @@ std::string Expr::toString() {
     if (this->is_value) {
         return std::to_string(this->value);
     }
-    return this->left->toString() + " " + this->right->toString() + " " + OPERATOR_NAMES[this->op.type];
+    // return this->left->toString() + " " + this->right->toString() + " " + OPERATOR_NAMES[this->op.type];
 }
 
 OperatorFuncPtr OPERATOR_FUNCS[5];
@@ -16,8 +16,8 @@ void loadOperatorFuncs() {
     OPERATOR_FUNCS[OP_DIV] = *_operatorDiv;
 }
 
-value_t evalOperator(Operator op, value_t left, value_t right) {
+value_t evalOperator(Operator op, std::vector<value_t> args) {
     // printf("eval op %d\n",op.type);
     OperatorFuncPtr opFunc = OPERATOR_FUNCS[op.type];
-    return opFunc(left,right);
+    return opFunc(args);
 }

@@ -30,7 +30,7 @@ int main() {
                 evalStack.pop_back();
                 value_t left = evalStack[evalStack.size()-1];
                 evalStack.pop_back();
-                value_t result = evalOperator(item.op,left,right);
+                value_t result = evalOperator(item.op,{left,right});
                 evalStack.push_back(result);
             }
             
