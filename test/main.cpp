@@ -1,13 +1,21 @@
 #include <stdio.h>
+#include <ctime>
+#include <unistd.h>
+#include <sys/time.h>
 #include "parser.hpp"
+#include "eval.hpp"
 
 int main() {
     loadOperatorFuncs();
+    std::map<std::string,value_t> vars;
+    vars["ans"]=0;
     while (1) {
+        struct timeval start, end;
 
         printf("expr> ");
         char buf[100];
         fgets(buf,99,stdin);
+        gettimeofday(&start,0);
     
         std::string expr = std::string(buf);
     
@@ -16,26 +24,16 @@ int main() {
     
         ExprStack stack=parseStringToExprStack(expr);
         std::vector<value_t> evalStack;
-        // printf("stack:\n");
-        for (ExprStackItem item : stack.stack) {
-            // printf("item: %s\n",item.toString().c_str());
-            // printf("  evalstack: ");
-            // for (value_t i:evalStack)
-            //     printf("%f ",i);
-            // printf("\n");
-            if (item.type==EXPR_STACK_ITEM_VALUE)
-                evalStack.push_back(item.value);
-            if (item.type==EXPR_STACK_ITEM_OPERATOR) {
-                value_t right = evalStack[evalStack.size()-1];
-                evalStack.pop_back();
-                value_t left = evalStack[evalStack.size()-1];
-                evalStack.pop_back();
-                value_t result = evalOperator(item.op,{left,right});
-                evalStack.push_back(result);
-            }
-            
-        }
-        printf("%f\n",evalStack[0]);
+        Expr ex = convertExprStackToExpr(stack);
+        // printf("%s\n",ex.toTreeString(0).c_str());
+        value_t result = evalExpr(ex, vars);
+        printf("result: %f\n",result);
+
+        vars["ans"]=result;
+        
+        gettimeofday(&end,0);
+        
+        printf("took %fms\n",float(end.tv_usec-start.tv_usec)/1000.0f);
     }
 
     return 0;

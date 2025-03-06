@@ -78,3 +78,48 @@ std::string ExprStackItem::toString() {
     if (this->type==EXPR_STACK_ITEM_OPERATOR)
         return OPERATOR_NAMES[this->op.type];
 }
+
+Expr convertExprStackToExpr(ExprStack stack) {
+    std::vector<Expr> exprStack; // bad name i know
+
+    for (int i=0;i<stack.stack.size();i++) {
+        ExprStackItem item = stack.stack[i];
+        if (item.type==EXPR_STACK_ITEM_OPERATOR) {
+            // Get the arguments
+            int args=OPERATOR_ARGS[item.op.type];
+            // Make a slice getting the last <args> items off the stack
+            std::vector<Expr> argsVec=std::vector<Expr>(exprStack.end() - args, exprStack.end());
+            // Construct the new expression
+            Expr ex;
+            ex.arguments=argsVec;
+            ex.op=item.op;
+            // Now remove the arguments from the stack
+            for (int j=0;j<args;j++)
+                exprStack.pop_back();
+            // Now put the new expression on the stack
+            exprStack.push_back(ex);
+            // printf("I found an op '%s'\n",OPERATOR_NAMES[item.op.type].c_str());
+            // printf("I just popped %d args, heres one '%s'\n",args,ex.arguments[0].toString().c_str());
+            // printf("New expr: %s\n",ex.toString().c_str());
+        } else {
+            Expr ex;
+            if (item.type==EXPR_STACK_ITEM_VALUE) {
+                ex.is_value=true;
+                ex.value=item.value;
+            }
+            if (item.type==EXPR_STACK_ITEM_VARIABLE) {
+                ex.is_var=true;
+                ex.varName=item.varName;
+            }
+            exprStack.push_back(ex);
+        }
+        // printf("heres the stack: ");
+        // for (Expr e : exprStack) {
+        //     printf("%s | ",e.toString().c_str());
+        // }
+        // printf("\n");
+    }
+    
+    // TODO: assert that len(exprStack)==1
+    return exprStack[0];
+}

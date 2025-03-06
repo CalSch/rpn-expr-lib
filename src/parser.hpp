@@ -1,5 +1,6 @@
 #pragma once
 #include "expr.hpp"
+#include "operators.hpp"
 
 enum ExprStackItemType {
     EXPR_STACK_ITEM_VALUE,
@@ -25,3 +26,4 @@ bool parseOperator(std::string str, Operator* op);
 
 bool parseStringToExprStackItem(std::string block, ExprStackItem* outItem);
 ExprStack parseStringToExprStack(std::string str);
+Expr convertExprStackToExpr(ExprStack stack);
